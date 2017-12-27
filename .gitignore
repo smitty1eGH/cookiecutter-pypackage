@@ -30,14 +30,16 @@ Temporary Items
 # C extensions
 *.so
 
-# Distribution / packaging
+# Distribution / packaging / venv
 .Python
+bin/
 env/
 build/
 develop-eggs/
 dist/
 downloads/
 eggs/
+include/
 .eggs/
 lib/
 lib64/
@@ -47,6 +49,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
