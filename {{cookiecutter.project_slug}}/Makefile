@@ -1,82 +1,72 @@
 .PHONY: clean clean-test clean-pyc clean-build docs help
 .DEFAULT_GOAL := help
-define BROWSER_PYSCRIPT
-import os, webbrowser, sys
-try:
-	from urllib import pathname2url
-except:
-	from urllib.request import pathname2url
-
-webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
-endef
-export BROWSER_PYSCRIPT
-
-define PRINT_HELP_PYSCRIPT
-import re, sys
-
-for line in sys.stdin:
-	match = re.match(r'^([a-zA-Z_-]+):.*?## (.*)$$', line)
-	if match:
-		target, help = match.groups()
-		print("%-20s %s" % (target, help))
-endef
-export PRINT_HELP_PYSCRIPT
-BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 help:
-	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+	@echo ""
+	@echo "Handy project commands:"
+	@echo ""
+	@echo "target  | description"
+	@echo "--------+------------"
+	@echo "eserv     Run emacs daemon in venv"
+	@echo "ecli      Run emacsclient after eserv is running"
+	@echo "clean     remove all build, test, coverage and Python artifacts
+	@echo "lint      check style with flake8
+	@echo "test      run tests quickly with the default Python
+	@echo "test-all  run tests on every Python version with tox
+	@echo "coverage  check code coverage quickly with the default Python
+	@echo "docs      generate Sphinx HTML documentation, including API docs
+	@echo "servedocs compile the docs watching for changes
+	@echo "release   package and upload a release
+	@echo "dist      builds source and wheel package
+	@echo "install   install the package to the active Python's site-packages
+	@echo ""
+eserv:
+	@find ~/.emacs.d -type f -name ".elc" -delete && emacs --daemon && echo "\n" && emacsclient -t --eval '(dired-jump)'
+ecli:
+	@emacsclient -t --eval '(dired-jump)'
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
-
 
 clean-build: ## remove build artifacts
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -f {} +
+	find . -name '*.egg'      -exec rm -f  {} +
 
 clean-pyc: ## remove Python file artifacts
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
+	find . -name '*.pyc'       -exec rm  -f {} +
+	find . -name '*.pyo'       -exec rm  -f {} +
+	find . -name '*~'          -exec rm  -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 
 clean-test: ## remove test and coverage artifacts
 	rm -fr .tox/
-	rm -f .coverage
-	rm -fr htmlcov/
+	rm  -f .coverage
+	rm -fr  htmlcov/
 
 lint: ## check style with flake8
-	flake8 {{ cookiecutter.project_slug }} tests
+	flake8 cedar2666 tests
 
 test: ## run tests quickly with the default Python
-	{% if cookiecutter.use_pytest == 'y' -%}
-		py.test
-	{% else %}
-		python setup.py test
-	{%- endif %}
+	python setup.py test
 
 test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
-{%- if cookiecutter.use_pytest == 'y' %}
-	coverage run --source {{ cookiecutter.project_slug }} -m pytest
-{%- else %}
-	coverage run --source {{ cookiecutter.project_slug }} setup.py test
-{%- endif %}
+	coverage run --source cedar2666 setup.py test
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/{{ cookiecutter.project_slug }}.rst
+	rm -f docs/cedar2666.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ {{ cookiecutter.project_slug }}
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
+	sphinx-apidoc -o docs/ cedar2666
+	$(MAKE)       -C docs  clean
+	$(MAKE)       -C docs  html
+	$(BROWSER)       docs/_build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
@@ -92,3 +82,5 @@ dist: clean ## builds source and wheel package
 
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
+	@rm -vf __pycache__/*
+
