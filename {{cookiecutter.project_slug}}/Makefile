@@ -9,23 +9,23 @@ help:
 	@echo "--------+------------"
 	@echo "eserv     Run emacs daemon in venv"
 	@echo "ecli      Run emacsclient after eserv is running"
-	@echo "clean     remove all build, test, coverage and Python artifacts
-	@echo "lint      check style with flake8
-	@echo "test      run tests quickly with the default Python
-	@echo "test-all  run tests on every Python version with tox
-	@echo "coverage  check code coverage quickly with the default Python
-	@echo "docs      generate Sphinx HTML documentation, including API docs
-	@echo "servedocs compile the docs watching for changes
-	@echo "release   package and upload a release
-	@echo "dist      builds source and wheel package
-	@echo "install   install the package to the active Python's site-packages
+	@echo "clean     remove all build, test, coverage and Python artifacts"
+	@echo "lint      check style with flake8"
+	@echo "test      run tests quickly with the default Python"
+	@echo "test-all  run tests on every Python version with tox"
+	@echo "coverage  check code coverage quickly with the default Python"
+	@echo "docs      generate Sphinx HTML documentation, including API docs"
+	@echo "servedocs compile the docs watching for changes"
+	@echo "release   package and upload a release"
+	@echo "dist      builds source and wheel package"
+	@echo "install   install the package to the active Python's site-packages"
 	@echo ""
 eserv:
 	@find ~/.emacs.d -type f -name ".elc" -delete && emacs --daemon && echo "\n" && emacsclient -t --eval '(dired-jump)'
 ecli:
 	@emacsclient -t --eval '(dired-jump)'
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test 
 
 clean-build: ## remove build artifacts
 	rm -fr build/
